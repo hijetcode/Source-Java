@@ -1,0 +1,139 @@
+
+package com.jabsoft.simpkbb.view;
+
+import com.jabsoft.simpkbb.entity.Kasir;
+import com.jabsoft.simpkbb.implement.ImplemKasir;
+import com.jabsoft.simpkbb.interfaces.InterKasir;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
+
+/**
+ *
+ * @author epol
+ */
+public class MenuUtama extends javax.swing.JFrame {
+    private Kasir k=new Kasir();
+    InterKasir daoKasir;
+
+    /** Creates new form MenuUtama */
+    public MenuUtama() {
+        initComponents();
+        daoKasir=new ImplemKasir();
+        menuItemLogout.setEnabled(false);
+        menuMasterData.setVisible(false);
+        menuTransaksi.setVisible(false);
+        menuLaporan.setVisible(false);
+    }
+    boolean cekLogin(String user, String pass){
+        boolean hasil=false;
+        try {
+            k=daoKasir.getByUsername(user);
+            if(user.equals(k.getUsername())&&pass.equals(k.getPassword())){
+                hasil=true;
+            }else{
+                hasil=false;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuUtama.class.getName()).log(Level.SEVERE,null, ex);
+        }
+        return hasil;
+    }
+                     
+
+    private void menuItemDataKayuActionPerformed(java.awt.event.ActionEvent evt) {                                                 
+        // TODO add your handling code here:
+        Form_data_kayu dk=new Form_data_kayu();
+        jDesktopPane1.add(dk);
+        dk.setVisible(true);
+    }                                                
+
+    private void menuItemLoginActionPerformed(java.awt.event.ActionEvent evt) {                                              
+        // TODO add your handling code here:
+        jDialog1.setSize(400, 300);
+        jDialog1.setLocationRelativeTo(null);
+        jDialog1.setVisible(true);
+    }                                             
+
+    private void btnMasukActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        // TODO add your handling code here:
+        if(cekLogin(txtUsername.getText(),txtPassword.getText())){
+            txtUsername.setText("");
+            txtPassword.setText("");
+            menuItemLogin.setEnabled(false);
+            menuItemLogout.setEnabled(true);
+            this.setTitle("Nama "+k.getAkses()+" : " + k.getNama() +" --- SIMPKBB [ Sistem Informasi Penjualan Kayu Bangun Bersama ]");
+            jDialog1.setVisible(false);
+            if(k.getAkses().equals("Kasir")){
+                menuMasterData.setVisible(false);
+                menuTransaksi.setVisible(true);
+                menuLaporan.setVisible(true);
+                menuItemLaporanPembeliankayu.setVisible(false);
+            }else if(k.getAkses().equals("Admin")){
+                menuMasterData.setVisible(true);
+                menuLaporan.setVisible(true);
+                menuItemLaporanPembeliankayu.setVisible(true);
+            }else{
+                menuMasterData.setVisible(true);
+                menuLaporan.setVisible(true);
+                menuTransaksi.setVisible(true);
+                menuItemLaporanPembeliankayu.setVisible(true);
+            }
+        }else{
+            JOptionPane.showMessageDialog(this, "Upss! Username dan password salah","Kesalahan",
+                    JOptionPane.ERROR_MESSAGE);
+            txtUsername.setText("");
+            txtPassword.setText("");
+        }
+    }                                        
+
+    private void txtPasswordKeyPressed(java.awt.event.KeyEvent evt) {                                       
+        // TODO add your handling code here:
+        if(evt.getKeyCode()==evt.VK_ENTER){
+            btnMasukActionPerformed(null);
+        }
+    }                                      
+
+    private void menuItemLogoutActionPerformed(java.awt.event.ActionEvent evt) {                                               
+        // TODO add your handling code here:
+        menuItemLogin.setEnabled(true);
+        menuItemLogout.setEnabled(false);
+        menuTransaksi.setVisible(false);
+        menuMasterData.setVisible(false);
+        menuLaporan.setVisible(false);
+        this.setTitle("SIMPKBB [ Sistem Informasi Penjualan Kayu Bangun Bersama ]");
+    }                                              
+
+    private void menuItemKeluarActionPerformed(java.awt.event.ActionEvent evt) {                                               
+        // TODO add your handling code here:
+        System.exit(1);
+    }                                              
+
+    private void menuItemDataPengelolaActionPerformed(java.awt.event.ActionEvent evt) {                                                      
+        // TODO add your handling code here:
+        Form_Pengelola penge=new Form_Pengelola();
+        jDesktopPane1.add(penge);
+        penge.setVisible(true);
+    }                                                     
+
+    private void menuItemPenjualanKayuActionPerformed(java.awt.event.ActionEvent evt) {                                                      
+        // TODO add your handling code here:
+        Form_Penjualan_kayu pj=new Form_Penjualan_kayu();
+        jDesktopPane1.add(pj);
+        pj.setVisible(true);
+    }                                                     
+
+    /**
+    * @param args the command line arguments
+    */
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new MenuUtama().setVisible(true);
+            }
+        });
+    }                 
+
+}
